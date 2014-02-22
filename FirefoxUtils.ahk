@@ -1,3 +1,5 @@
+; Do NOT use in new scripts unless you want namespace pollution.
+
 ActivateFirefox()
 {
     prev_title_match_mode := A_TitleMatchMode
@@ -16,7 +18,7 @@ ActivateWindowWithTitle(win_title)
     SetTitleMatchMode RegEx
 
     WinActivate i)%win_title%
-    ; MsgBox i)%win_title%
+    MsgBox i)%win_title%
 
     SetTitleMatchMode % prev_title_match_mode
     return
@@ -44,6 +46,48 @@ FirefoxOpenNewTab(url)
     MouseGotoCenter()
 }
 
+_firefox_open_tab_by_id(tab_id, alt_shortcut = 1)
+{
+    if (alt_shortcut)
+    {
+        ; alt + 1|2|...|8
+        Send !%tab_id%
+    }
+    else ; assume ctrl shortcut
+    {
+        ; ctrl + 1|2|...|8
+        Send ^%tab_id%
+    }
+}
+
+FirefoxOpenTabById(tab_id = 1, is_firefox_active = 1, alt_shortcut = 1)
+{
+    if (not is_firefox_active)
+    {
+        ActivateFirefox()
+    }
+
+    if (tab_id < 1)
+    {
+        return
+    }
+
+    if (tab_id <= 8)
+    {
+        _firefox_open_tab_by_id(tab_id, alt_shortcut)
+    }
+    else if (tab_id <= 15)
+    {
+        _firefox_open_tab_by_id(8, alt_shortcut)
+        Loop % tab_id - 8
+        {
+            Send ^{Tab}
+        }
+    }
+
+    return
+}
+
 ; F2::
 ; {
 ;     ; ActivateFirefox()
@@ -55,4 +99,6 @@ FirefoxOpenNewTab(url)
     ; return
 
     ; MouseGotoCenter()
+
+    ; FirefoxOpenTabById(1)
 ; }
