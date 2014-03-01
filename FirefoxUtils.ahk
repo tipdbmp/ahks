@@ -39,7 +39,6 @@ FirefoxOpenNewTab(url)
 {
     ActivateFirefox()
     Send ^t
-    ; Send ^l
     Send %url%
     Send {Enter}
 
